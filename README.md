@@ -6,7 +6,9 @@ Additionally it will alert if the domain has DMARC configuration that sends mail
 
 Usage:
 
-	./spoofcheck.py [DOMAIN]
+	./spoofcheck.py -d [DOMAIN]
+
+*`-d [DOAMIN]` can be specified any number of times for mutliple domains*
 
 Domains are spoofable if any of the following conditions are met:
 - Lack of an SPF or DMARC record
