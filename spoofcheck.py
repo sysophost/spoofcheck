@@ -1,16 +1,18 @@
 #! /usr/bin/env python
 
 import sys
-
-from colorama import init as color_init
-
+import logging
+import argparse
 import emailprotectionslib.dmarc as dmarclib
 import emailprotectionslib.spf as spflib
-import logging
 
+from colorama import init as color_init
 from libs.PrettyOutput import output_good, output_bad, \
     output_info, output_error, output_indifferent
 
+PARSER = argparse.ArgumentParser()
+PARSER.add_argument('-domain', '-d', type=str, action='append', required=True, help="Target domain (Can be supplied multiple times for multiple domains).")
+ARGS = PARSER.parse_args()
 
 logging.basicConfig(level=logging.INFO)
 
@@ -212,21 +214,26 @@ if __name__ == "__main__":
     color_init()
     spoofable = False
 
-    try:
-        domain = sys.argv[1]
+    for d in ARGS.domain:
 
-        spf_record_strength = is_spf_record_strong(domain)
+        try:
+            domain = d
+            print(domain)
 
-        dmarc_record_strength = is_dmarc_record_strong(domain)
-        if dmarc_record_strength is False:
-            spoofable = True
-        else:
-            spoofable = False
+            spf_record_strength = is_spf_record_strong(domain)
 
-        if spoofable:
-            output_good("Spoofing possible for " + domain + "!")
-        else:
-            output_bad("Spoofing not possible for " + domain)
+            dmarc_record_strength = is_dmarc_record_strong(domain)
+            if dmarc_record_strength is False:
+                spoofable = True
+            else:
+                spoofable = False
 
-    except IndexError:
-        output_error("Usage: " + sys.argv[0] + " [DOMAIN]")
+            if spoofable:
+                output_good("Spoofing possible for " + domain + "!")
+            else:
+                output_bad("Spoofing not possible for " + domain)
+
+            print("-" * 20)
+
+        except IndexError:
+            output_error("Usage: " + sys.argv[0] + " [DOMAIN]")
