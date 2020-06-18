@@ -1,20 +1,20 @@
 #! /usr/bin/env python
 
-import sys
-import logging
 import argparse
+import logging
+import sys
+
 import emailprotectionslib.dmarc as dmarclib
 import emailprotectionslib.spf as spflib
-
 from colorama import init as color_init
-from libs.PrettyOutput import output_good, output_bad, \
-    output_info, output_error, output_indifferent
+from libs.PrettyOutput import (output_bad, output_error, output_good,
+                               output_indifferent, output_info)
 
 PARSER = argparse.ArgumentParser()
 PARSER.add_argument('-domain', '-d', type=str, action='append', required=True, help="Target domain (Can be supplied multiple times for multiple domains).")
 ARGS = PARSER.parse_args()
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(format='%(message)s', level=logging.INFO, stream=sys.stderr)
 
 
 def check_spf_redirect_mechanisms(spf_record):
@@ -139,7 +139,7 @@ def get_dmarc_org_record(base_record):
 
 def check_dmarc_extras(dmarc_record):
     if dmarc_record.pct is not None and dmarc_record.pct != str(100):
-            output_indifferent("DMARC pct is set to " + dmarc_record.pct + "% - might be possible")
+        output_indifferent("DMARC pct is set to " + dmarc_record.pct + "% - might be possible")
 
     if dmarc_record.rua is not None:
         output_indifferent("Aggregate reports will be sent: " + dmarc_record.rua)
@@ -218,7 +218,7 @@ if __name__ == "__main__":
 
         try:
             domain = d
-            print(domain)
+            logging.info(domain)
 
             spf_record_strength = is_spf_record_strong(domain)
 
@@ -233,7 +233,7 @@ if __name__ == "__main__":
             else:
                 output_bad("Spoofing not possible for " + domain)
 
-            print("-" * 20)
+            logging.info("-" * 20)
 
         except IndexError:
             output_error("Usage: " + sys.argv[0] + " [DOMAIN]")
