@@ -14,7 +14,7 @@ PARSER = argparse.ArgumentParser()
 PARSER.add_argument('-domain', '-d', type=str, action='append', required=True, help="Target domain (Can be supplied multiple times for multiple domains).")
 ARGS = PARSER.parse_args()
 
-logging.basicConfig(format='%(message)s', level=logging.INFO, stream=sys.stderr)
+logging.basicConfig(format='%(message)s', level=logging.INFO, stream=sys.stdout)
 
 
 def check_spf_redirect_mechanisms(spf_record):
@@ -215,7 +215,6 @@ if __name__ == "__main__":
     spoofable = False
 
     for d in ARGS.domain:
-
         try:
             domain = d
             logging.info(domain)
